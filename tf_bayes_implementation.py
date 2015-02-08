@@ -17,11 +17,15 @@ def remove_punctuation(s):
 
 
 def clean(x):
+    """ Wrapper function to remove punctuation and tokenize """
     x = remove_punctuation(x)
     return " ".join(re.split("\W+", x))
 
 
 def createVocabs(df):
+    """ creates the vocabularies for each type of SMS, and the
+    total number of unique words """
+
     spams = df[df["type"] == "spam"]["text"].apply(clean)
     hams = df[df["type"] == "ham"]["text"].apply(clean)
 
@@ -38,12 +42,15 @@ def createVocabs(df):
 
 
 def createPriors(df):
+    """ creates the prior probabilites for each type of SMS """
     prior_ham = np.sum(df["type"] == "ham")/len(df)
     prior_spam = np.sum(df["type"] == "spam")/len(df)
     return prior_ham, prior_spam
 
 
 def naive(document):
+    """ term frequency implementation of naive bayes. Takes a
+    vector and classifies it as either 'ham' or 'spam' """
     prob_spam = []
     prob_ham = []
     for word in document:
@@ -62,6 +69,7 @@ def naive(document):
 
 
 def run_bayes(x):
+    """ wrapper function to pre-process pandas data series """
     y = clean(x).split()
     return naive(y)
 
